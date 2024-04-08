@@ -65,7 +65,7 @@ const Footer = () => {
                 target=""
               >
                 {" "}
-                Design by{" "}
+                Gestaltung{" "}
               </a>
               <a
                 href="/"
