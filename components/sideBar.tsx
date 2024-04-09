@@ -90,14 +90,13 @@ const Sidebar = () => {
           </ul>
           <div className="flex flex-col text-center justify-center">
             <span className="text-xl font-bold pt-5">Was ist B2Bmatch.ch?</span>
-            <p className="text-left p-5 pb-0">
-              Wirtschaftsinformationen aus der Deutschschweiz. Kostenlos können
-              Sie selbst Marktanalysen durchführen. Konkrete Informationen über
+            <p className="text-left p-5 pb-0">Adressen von Deutschschweizer Firmen. </p>
+            <p className="text-left p-5 pb-3">Kostenlos selbst Marktanalysen durchführen. Konkrete Informationen über
               Marktteilnehmer sind kostenpflichtig. Kontaktieren Sie uns:{" "}
               <b>044 380 78 88</b>
             </p>{" "}
-            <p className="text-left pl-5 pb-1">Um Suchabfragen zu speichern, müssen Sie sich einloggen. </p>
-            <p className="text-left pl-5 pb-1">Unter "Hilfe" finden Sie Anleitungen und Tipps.</p>
+            <p className="text-left pl-5 pb-3">Um Suchabfragen zu speichern, müssen Sie sich einloggen. </p>
+            <p className="text-left pl-5 pb-3">Unter "Hilfe" finden Sie Anleitungen und Tipps.</p>
             {/* <p>email:{session?.user.email_verified ?  false : true}</p>
             {session?.user.email_verified ? (
               <>

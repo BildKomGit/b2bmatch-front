@@ -62,7 +62,7 @@ const LoginForm = ({ switchToSignupTab }: { switchToSignupTab: any }) => {
                   htmlFor="email"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Deine E-Mail
+                  E-Mail
                 </label>
                 <input
                   type="email"
@@ -133,7 +133,7 @@ const LoginForm = ({ switchToSignupTab }: { switchToSignupTab: any }) => {
                       htmlFor="remember"
                       className="text-gray-500 dark:text-gray-300"
                     >
-                      Erinnere dich an mich
+                      Besuch speichern
                     </label>
                   </div>
                 </div>
