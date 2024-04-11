@@ -11,20 +11,15 @@ async function getTreemap() {
 
 const PromptGrph = async () => {
   const data = await getTreemap();
-  // const data = "<>s</>";
-  if (!data) {
-    return (
-      <div className="w-full h-[1000px] flex items-center justify-center">
-        <h1>hi</h1>
-      </div>
-    );
-  }
   return (
-    <div className="w-full rounded-lg flex text-lg mt-2">
-      <iframe
-        className="w-full rounded-lg mr-3 h-[480px]"
-        srcDoc={data}
-      />
+    <div className="w-full rounded-lg flex text-lg mt-2 h-[500px]">
+      <div className="absolute w-11/12">
+        <iframe
+          className="w-full rounded-lg mr-3 h-[1020px] absolute z-10"
+          srcDoc={data}
+        />
+        <img src="/intro.svg" className="h-[420px] absolute z-0 w-11/12" />
+      </div>
     </div>
   );
 };
