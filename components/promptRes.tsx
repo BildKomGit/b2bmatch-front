@@ -1,5 +1,8 @@
 import React from "react";
-const PromptRes = () => {
+type PromptResProps = {
+  responseMessage: string;
+};
+const PromptRes: React.FC<PromptResProps> = ({ responseMessage }) => {
   return (
     <>
       <div className="flex flex-col w-full rounded-lg pt-2 pb-2">
@@ -8,7 +11,7 @@ const PromptRes = () => {
             Hier wird Ihr Suchergebnis verbal dargestellt. Die Grafik zeigt Ihnen dasselbe mit mehr Details.
           </p>
           <p className="  text-lg">
-            {/* Text field left intentionally empty */}
+            {responseMessage}
           </p>
         </div>
       </div>

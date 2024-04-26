@@ -1,12 +1,16 @@
 import { cn } from "@/lib/utils";
-import PromptText from "./promptText";
+import dynamic from 'next/dynamic';
+const PromptText = dynamic(() => import('./promptText'), {
+  ssr: false  // This will ensure that the component is only rendered on the client-side
+});
 import TextCard from "@/components/promptCard";
-import React, { useRef } from "react";
+import React, { useRef,useState } from "react";
 import PromptRes from "@/components/promptRes";
 import PromptGraph from "@/components/promptGraph";
 import Footer from "@/components/footer";
 export default function Main() {
-
+  const [tips, setTips] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
   return (
     <>
       <div
@@ -16,15 +20,15 @@ export default function Main() {
       >
         <div className="overflow-scroll overflow-x-hidden relative max-h-lvh border-bor border-2 rounded-lg w-full">
           <div className="w-full  rounded-lg flex flex-col p-4">
-            <PromptText />
+            <PromptText setTips={setTips} setResponseMessage={setResponseMessage}/>
             <TextCard
-              title="Title"
+              title=""
               description=""
               buttonText="Learn More"
               buttonLink="#"
-              customMessage="This is a  message for Title.This is a  message for Title"
+              customMessage={tips}
             />
-            <PromptRes />
+            <PromptRes responseMessage={responseMessage}  />
             <PromptGraph />
           </div>
           <Footer />

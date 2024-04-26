@@ -1,16 +1,33 @@
-async function getTreemap() {
-  const res = await fetch('http://46.101.116.31:3000/get-treemap', {
-    cache: 'no-store',
-    headers: {
-      'Authorization': `${process.env.JWT_TOKEN}`,
-    },
-  });
-  const data = await res.text();
-  return data;
-}
+import React, { useState, useEffect } from 'react';
 
-const PromptGrph = async () => {
-  const data = await getTreemap();
+const PromptGrph = () => {
+  const [data, setData] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // This function is called once, after the component is mounted
+    fetch('http://46.101.116.31:3000/get-treemap')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then((treemapData) => {
+        setData(treemapData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);  // The empty dependency array tells React to run the effect once, after the initial render.
+
+  if (loading) {
+    return <img src="/intro.svg" className="w-full rounded-lg flex text-lg mt-2 h-[500px]" />;
+  }
+  if (error) return <p>Error: {error}</p>;
   return (
     <div className="w-full rounded-lg flex text-lg mt-2 h-[500px]">
       <div className="absolute w-11/12">
@@ -18,7 +35,6 @@ const PromptGrph = async () => {
           className="w-full rounded-lg mr-3 h-[1020px] absolute z-10"
           srcDoc={data}
         />
-        <img src="/intro.svg" className="h-[420px] absolute z-0 w-11/12" />
       </div>
     </div>
   );

@@ -5,8 +5,12 @@ import { Textarea } from "./ui/textarea";
 import "../app/globals.css";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-
-const PromptText = () => {
+import { collectGenerateParams } from "next/dist/build/utils";
+interface Props {
+  setTips: React.Dispatch<React.SetStateAction<string>>;
+  setResponseMessage: React.Dispatch<React.SetStateAction<string>>;
+}
+const PromptText = ({ setTips, setResponseMessage }: Props) => {
   const { data: session } = useSession();
   const submitButtonRef = useRef(null);
   const [promptText, setPromptText] = useState("");
@@ -28,9 +32,9 @@ const PromptText = () => {
       return;
     }
 
-    if (session) {
+    //if (session) {
       const headersList = {
-        "Authorization": `Bearer ${session.access_token}`,
+        //"Authorization": `Bearer ${session.access_token}`,
         "Content-Type": "application/json"
       };
       try {
@@ -46,11 +50,14 @@ const PromptText = () => {
         });
 
         if (!response.ok) {
+          console.log(response);
           toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const responseData = await response.json();
+        setTips(responseData.tips);
+        setResponseMessage(responseData.response);
         toast.success(`${responseData.message} `, {
           position: "top-center",
           autoClose: 3000,
@@ -64,9 +71,10 @@ const PromptText = () => {
       } catch (error) {
         console.error("API Error:", error);
       }
-    } else {
-      toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
-    }
+    // } else {
+    //   console.log("here is nothing");
+    //   toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
+    // }
   };
 
   return (
@@ -83,28 +91,25 @@ const PromptText = () => {
         <div className="flex flex-col m-2 w-24">
           <Button
             variant={"outline"}
-            className={`bg-primary text-secondary text-sm h-7 border-white border ${promptText.trim().length === 0 && "opacity-50 cursor-not-allowed"
+            className={`bg-primary text-secondary text-sm h-7 border-white border"
               }`}
             onClick={handleSave}
-            disabled={promptText.trim().length === 0}
           >
             Speichern
           </Button>
           <Button
             variant={"outline"}
-            className={`bg-primary text-secondary h-7 border-white border ${promptText.trim().length === 0 && "opacity-50 cursor-not-allowed"
+            className={`bg-primary text-secondary h-7 border-white border"
               }`}
             onClick={handleNew}
-            disabled={promptText.trim().length === 0}
           >
             Neu
           </Button>
           <Button
             variant={"outline"}
-            className={`bg-primary text-secondary h-7 border-white border ${promptText.trim().length === 0 && "opacity-50 cursor-not-allowed"
+            className={`bg-primary text-secondary h-7 border-white border"
               }`}
             ref={submitButtonRef}
-            disabled={promptText.trim().length === 0}
           >
             Senden
           </Button>
