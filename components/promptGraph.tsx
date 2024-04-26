@@ -25,7 +25,7 @@ const PromptGrph = () => {
   }, []);  // The empty dependency array tells React to run the effect once, after the initial render.
 
   if (loading) {
-    return <img src="/intro.svg" className="w-full rounded-lg flex text-lg mt-2 h-[500px]" />;
+    return <img src="/Intro.svg" className="w-full rounded-lg flex text-lg mt-2 h-[500px]" />;
   }
   if (error) return <p>Error: {error}</p>;
   return (
