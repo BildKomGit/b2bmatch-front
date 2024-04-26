@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   },

@@ -1,8 +1,6 @@
+"use client";
 import { cn } from "@/lib/utils";
-import dynamic from 'next/dynamic';
-const PromptText = dynamic(() => import('./promptText'), {
-  ssr: false  // This will ensure that the component is only rendered on the client-side
-});
+import PromptText from "./promptText";
 import TextCard from "@/components/promptCard";
 import React, { useRef,useState } from "react";
 import PromptRes from "@/components/promptRes";
