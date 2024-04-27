@@ -93,10 +93,10 @@ const Sidebar = () => {
             <p className="text-left p-5 pb-0">Adressen von Deutschschweizer Firmen. </p>
             <p className="text-left p-5 pb-3">Kostenlos selbst Marktanalysen durchführen. Konkrete Informationen über
               Marktteilnehmer sind kostenpflichtig. Kontaktieren Sie uns:{" "}
-              <b>044 380 78 88</b>
+              <b>044 380 78 88</b><b></b>
             </p>{" "}
-            <p className="text-left pl-5 pb-3">Um Suchabfragen zu speichern, müssen Sie sich einloggen. </p>
-            <p className="text-left pl-5 pb-3">Unter "Hilfe" finden Sie Anleitungen und Tipps.</p>
+            <p className="text-left pl-5 pb-5">Um Suchabfragen zu speichern, müssen Sie sich einloggen. </p>
+            <p className="text-left pl-5 pb-5">Unter "Hilfe" finden Sie Anleitungen und Tipps.</p>
             {/* <p>email:{session?.user.email_verified ?  false : true}</p>
             {session?.user.email_verified ? (
               <>

@@ -18,11 +18,11 @@ export default function Main() {
           <div className="w-11/12  rounded-lg flex flex-col p-4">
             <PromptText />
             <TextCard
-              title="Title"
+              title="Tipps"
               description=""
-              buttonText="Learn More"
+              buttonText="So gehts besser"
               buttonLink="#"
-              customMessage="This is a  message for Title.This is a  message for Title"
+              customMessage="Hier erhalten Sie Infos, wie Sie Ihre Suchanfragen verbessern können."
             />
             <PromptRes />
             <PromptGraph />
