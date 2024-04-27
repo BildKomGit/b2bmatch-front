@@ -1,12 +1,14 @@
+"use client";
 import { cn } from "@/lib/utils";
 import PromptText from "./promptText";
 import TextCard from "@/components/promptCard";
-import React, { useRef } from "react";
+import React, { useRef,useState } from "react";
 import PromptRes from "@/components/promptRes";
 import PromptGraph from "@/components/promptGraph";
 import Footer from "@/components/footer";
 export default function Main() {
-
+  const [tips, setTips] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
   return (
     <>
       <div
@@ -14,17 +16,17 @@ export default function Main() {
           "flex font-sans antialiased bg-secondary text-foreground text-xl overflow-hidden border-bor border-2 rounded-lg"
         )}
       >
-        <div className="overflow-scroll overflow-x-hidden relative max-h-lvh border-bor border-2 rounded-lg">
-          <div className="w-11/12  rounded-lg flex flex-col p-4">
-            <PromptText />
+        <div className="overflow-scroll overflow-x-hidden relative max-h-lvh border-bor border-2 rounded-lg w-full">
+          <div className="w-full  rounded-lg flex flex-col p-4">
+            <PromptText setTips={setTips} setResponseMessage={setResponseMessage}/>
             <TextCard
-              title="Tipps"
+              title=""
               description=""
               buttonText="So gehts besser"
               buttonLink="#"
-              customMessage="Hier erhalten Sie Infos, wie Sie Ihre Suchanfragen verbessern können."
+              customMessage={tips}
             />
-            <PromptRes />
+            <PromptRes responseMessage={responseMessage}  />
             <PromptGraph />
           </div>
           <Footer />
