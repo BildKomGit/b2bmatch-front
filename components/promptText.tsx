@@ -7,10 +7,11 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { collectGenerateParams } from "next/dist/build/utils";
 interface Props {
+  setUserInput: React.Dispatch<React.SetStateAction<string>>;
   setTips: React.Dispatch<React.SetStateAction<string>>;
   setResponseMessage: React.Dispatch<React.SetStateAction<string>>;
 }
-const PromptText = ({ setTips, setResponseMessage }: Props) => {
+const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
   const { data: session } = useSession();
   const submitButtonRef = useRef(null);
   const [promptText, setPromptText] = useState("");
@@ -31,7 +32,7 @@ const PromptText = ({ setTips, setResponseMessage }: Props) => {
       toast.error("Geben Sie zuerst Ihre Suchanfrage ein");
       return;
     }
-
+    setUserInput(promptText);
     //if (session) {
       const headersList = {
         //"Authorization": `Bearer ${session.access_token}`,

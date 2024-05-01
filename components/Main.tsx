@@ -7,6 +7,7 @@ import PromptRes from "@/components/promptRes";
 import PromptGraph from "@/components/promptGraph";
 import Footer from "@/components/footer";
 export default function Main() {
+  const [userInput, setUserInput] = useState("")
   const [tips, setTips] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   return (
@@ -18,7 +19,7 @@ export default function Main() {
       >
         <div className="overflow-scroll overflow-x-hidden relative max-h-lvh border-bor border-2 rounded-lg w-full">
           <div className="w-full  rounded-lg flex flex-col p-4">
-            <PromptText setTips={setTips} setResponseMessage={setResponseMessage}/>
+            <PromptText setUserInput={setUserInput} setTips={setTips} setResponseMessage={setResponseMessage}/>
             <TextCard
               title=""
               description=""
@@ -27,7 +28,7 @@ export default function Main() {
               customMessage={tips}
             />
             <PromptRes responseMessage={responseMessage}  />
-            <PromptGraph />
+            <PromptGraph userInput={userInput}/>
           </div>
           <Footer />
         </div>
