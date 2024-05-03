@@ -94,7 +94,7 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
             variant={"outline"}
             className={`bg-primary text-secondary text-sm h-7 border-white border"
               }`}
-            onClick={handleSave}
+            ref={submitButtonRef}
           >
             Speichern
           </Button>
@@ -110,7 +110,7 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
             variant={"outline"}
             className={`bg-primary text-secondary h-7 border-white border"
               }`}
-            ref={submitButtonRef}
+            onClick={handleSave}
           >
             Senden
           </Button>

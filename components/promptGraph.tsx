@@ -75,13 +75,13 @@ const PromptGrph : React.FC<PromptGrphProps> = ({ userInput }) => {
     }
 
     if (userInput === "Case1") {
-      // Fetch the graph from a URL
-      fetchData('http://46.101.116.31:3000/get-treemap');
-    } else if (userInput === "Case2") {
       // Use local SVG for Case2
       setData('/LongRendering.svg');
       setContentType('image/svg+xml'); // Directly set local file path
       setLoading(false); // No fetching, so not loading
+    } else if (userInput === "Case2") {
+      // Fetch the graph from a URL
+      fetchData('http://46.101.116.31:3000/get-treemap');
     }
   }, [userInput]); // React only to changes in userInput
 
