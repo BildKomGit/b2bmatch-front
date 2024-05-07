@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 interface TextCardProps {
   title: string;
   description: string;
@@ -11,6 +11,16 @@ const TextCard: React.FC<TextCardProps> = ({
   description,
   customMessage,
 }) => {
+  const [title, setTitle] = useState("");
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    const queryTitle = params.get('title');
+    if (queryTitle) {
+      setTitle(queryTitle);
+    }
+  }, []);
+  
   return (
     <div className="pt-1 pb-1 drop-shadow-lg  w-full ">
       <div className=" flex rounded-lg h-fit bg-response p-3 flex-col border-bor border-2 text-foreground ">

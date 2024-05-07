@@ -19,7 +19,7 @@ export default function Library() {
 
   if (!session) {
     // alert("Bitte melden Sie sich an, um auf diese Seite zuzugreifen.");
-    // toast.error(`Bitte melden Sie sich an, um auf diese Seite zuzugreifen.`);
+    // toast.error(Bitte melden Sie sich an, um auf diese Seite zuzugreifen.);
     router.replace(`/login`);
     return null;
   }
@@ -55,12 +55,12 @@ export default function Library() {
         method: "GET",
         headers: headersList,
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const responseData = await response.json();
+      console.log(responseData);
       toast.success(`${responseData.message} `, {
         position: "top-center",
         autoClose: 3000,
@@ -72,16 +72,28 @@ export default function Library() {
       });
 
       listPrompts();
-      setTimeout(() => { handleOpenNewTab() }, 3000);
+      setTimeout(() => { handleOpenNewTab(responseData.prompt_string, responseData.title) }, 3000);
     } catch (error) {
       console.error("API Error:", error);
     }
   };
 
-  const handleOpenNewTab = () => {
-    const url = '/';
-    window.open(url, '_blank');
+  const handleOpenNewTab = (promptString: string, title: string) => {
+    // Create a URL object
+    const url = new URL(window.location.origin + '/');
+
+    // Add query parameters
+    const params = new URLSearchParams();
+    params.set('prompt_string', promptString);
+    params.set('title', title);
+
+    // Append query parameters to the URL
+    url.search = params.toString();
+
+    // Open a new tab with the URL
+    window.open(url.toString(), '_blank');
   };
+
 
   const deletePrompt = async (pro_hist_id: number) => {
     try {
