@@ -45,8 +45,13 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
   const handleNew = () => {
     window.location.reload();
   };
-
-  const handleSave = async () => {
+  const handleSave = () => {
+    if(!session){
+      toast.error("Bitte registrieren Sie sich, damit Sie alle Funktionen benutzen können");
+      return;
+    }
+  }
+  const handleSend = async () => {
     if (promptText.trim().length === 0) {
       toast.error("Geben Sie zuerst Ihre Suchanfrage ein");
       return;
@@ -113,7 +118,8 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
             variant={"outline"}
             className={`bg-primary text-secondary text-sm h-7 border-white border"
               }`}
-            ref={submitButtonRef}
+            //ref={submitButtonRef}
+            onClick={handleSave}
           >
             Speichern
           </Button>
@@ -129,7 +135,7 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
             variant={"outline"}
             className={`bg-primary text-secondary h-7 border-white border"
               }`}
-            onClick={handleSave}
+            onClick={handleSend}
           >
             Senden
           </Button>
