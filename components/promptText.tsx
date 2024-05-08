@@ -69,7 +69,7 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
         method: "POST",
         headers: headersList,
         body: JSON.stringify({
-          user_id: "1",
+          user_id: session?.user.sub,
           prompt_string: promptText,
         }),
       });

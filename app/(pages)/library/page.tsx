@@ -12,7 +12,7 @@ interface Prompt {
 }
 
 export default function Library() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -25,13 +25,14 @@ export default function Library() {
   }
 
   const headersList = {
-    "Authorization": `Bearer ${session.access_token}`,
+    "Authorization": `Bearer ${session?.access_token}`,
     "Content-Type": "application/json"
   };
 
   const listPrompts = async () => {
     try {
-      const apiUrl = `${API_BASE_URL}/library/list_prompts?user_id=1`;
+      console.log(session?.user.sub)
+      const apiUrl = `${API_BASE_URL}/library/list_prompts?user_id=${session?.user.sub}`;
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: headersList,
@@ -125,8 +126,12 @@ export default function Library() {
   };
 
   useEffect(() => {
-    listPrompts();
-  }, []);
+    if (status === "unauthenticated") {
+      router.replace('/login');
+    } else if (status === "authenticated") {
+      listPrompts(); // Only call listPrompts if authenticated
+    }
+  }, [status, router]);
 
   return (
     <div className="flex flex-col bg-secondary pt-10">
