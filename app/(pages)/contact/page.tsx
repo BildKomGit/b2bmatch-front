@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import axios from 'axios';
 
 function submitContactMessage(messageData: any) {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/contact`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/contact`;
 
   return axios.post(apiUrl, messageData)
     .then(response => {
