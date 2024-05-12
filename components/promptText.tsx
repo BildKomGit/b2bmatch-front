@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Textarea } from "./ui/textarea";
 import "../app/globals.css";
@@ -12,6 +12,25 @@ const PromptText = () => {
   const [promptText, setPromptText] = useState("");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+
+  const [promptString, setPromptString] = useState("");
+  const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    const queryPromptString = params.get('prompt_string');
+    const queryTitle = params.get('title');
+    console.log(queryPromptString)
+    if (queryPromptString) {
+      setPromptString(queryPromptString);
+    }
+    if (queryTitle) {
+      setTitle(queryTitle);
+    }
+  }, []);
+
+
   const handleKeyDown = (event) => {
     if (event.keyCode === 13) {
       submitButtonRef.current.click();
@@ -21,52 +40,61 @@ const PromptText = () => {
   const handleNew = () => {
     window.location.reload();
   };
-
-  const handleSave = async () => {
+  const handleSave = () => {
+    if(!session){
+      toast.error("Bitte registrieren Sie sich, damit Sie alle Funktionen benutzen können");
+      return;
+    }
+  }
+  const handleSend = async () => {
     if (promptText.trim().length === 0) {
       toast.error("Geben Sie zuerst Ihre Suchanfrage ein");
       return;
     }
+    setUserInput(promptText);
+    //if (session) {
+    const headersList = {
+      //"Authorization": `Bearer ${session.access_token}`,
+      "Content-Type": "application/json"
+    };
+    try {
+      const apiUrl = `${API_BASE_URL}/library/store_prompt`;
 
-    if (session) {
-      const headersList = {
-        "Authorization": `Bearer ${session.access_token}`,
-        "Content-Type": "application/json"
-      };
-      try {
-        const apiUrl = `${API_BASE_URL}/library/store_prompt`;
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: headersList,
+        body: JSON.stringify({
+          user_id: session?.user.sub,
+          prompt_string: promptText,
+        }),
+      });
 
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: headersList,
-          body: JSON.stringify({
-            user_id: "1",
-            prompt_string: promptText,
-          }),
-        });
-
-        if (!response.ok) {
-          toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-        toast.success(`${responseData.message} `, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        console.log("API Response:", responseData);
-      } catch (error) {
-        console.error("API Error:", error);
+      if (!response.ok) {
+        console.log(response);
+        toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    } else {
-      toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
+
+      const responseData = await response.json();
+      setTips(responseData.tips);
+      setResponseMessage(responseData.response);
+      toast.success(`${responseData.message} `, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      console.log("API Response:", responseData);
+    } catch (error) {
+      console.error("API Error:", error);
     }
+    // } else {
+    //   console.log("here is nothing");
+    //   toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
+    // }
   };
 
   return (
@@ -77,7 +105,7 @@ const PromptText = () => {
           rows={3}
           className="pl-4 text-secondary-foreground bg-white border-2 rounded-xl text-lg w-full mt-2 border-bor focus:outline-none"
           onKeyDown={handleKeyDown}
-          value={promptText}
+          value={promptString || promptText}
           onChange={(e) => setPromptText(e.target.value)}
         />
         <div className="flex flex-col m-2 w-24">
@@ -85,8 +113,8 @@ const PromptText = () => {
             variant={"outline"}
             className={`bg-primary text-secondary text-sm h-7 border-white border ${promptText.trim().length === 0 && "opacity-50 cursor-not-allowed"
               }`}
+            //ref={submitButtonRef}
             onClick={handleSave}
-            disabled={promptText.trim().length === 0}
           >
             Speichern
           </Button>
@@ -103,8 +131,7 @@ const PromptText = () => {
             variant={"outline"}
             className={`bg-primary text-secondary h-7 border-white border ${promptText.trim().length === 0 && "opacity-50 cursor-not-allowed"
               }`}
-            ref={submitButtonRef}
-            disabled={promptText.trim().length === 0}
+            onClick={handleSend}
           >
             Senden
           </Button>
