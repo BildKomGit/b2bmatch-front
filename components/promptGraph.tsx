@@ -41,66 +41,62 @@
 // };
 
 // export default PromptGrph;
-import React, { useState, useEffect } from 'react';
-interface PromptGrphProps {
+import React, { useEffect, useState } from "react";
+import { useRefresh } from "./RefreshContext";
+
+interface PromptGraphProps {
   userInput: string; // Define the type for userInput explicitly
+  loading: boolean; // Add loading state
+  error: boolean; // Add error state
+  data: string | null; // Add data state
 }
-const PromptGrph : React.FC<PromptGrphProps> = ({ userInput }) => {
-  const [data, setData] = useState(null); // For fetched data or local file path
-  const [loading, setLoading] = useState(true);
+
+const PromptGraph: React.FC<PromptGraphProps> = ({
+  userInput,
+  loading,
+  error,
+  data,
+}) => {
+  const { refreshKey } = useRefresh();
   const [contentType, setContentType] = useState<string | null>(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    function fetchData(url: string) {
-      fetch(url)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const contentType = response.headers.get('Content-Type');
-          console.log('Content-Type:', contentType);
-          setContentType(response.headers.get('Content-Type'));
-          return response.text();
-        })
-        .then(data => {
-          setData(data);
-          setLoading(false);
-        })
-        .catch(error => {
-          setError(error.message);
-          setLoading(false);
-          setContentType('image/svg+xml');
-        });
+    if (data) {
+      if (data === "/LongRendering.svg" || data === "/OutOfScope.svg" || data === "/Intro.svg") {
+        setContentType("image/svg+xml");
+      } else {
+        setContentType("text/html");
+      }
     }
-
-    if (userInput === "Case1") {
-      // Use local SVG for Case2
-      setData('/LongRendering.svg');
-      setContentType('image/svg+xml'); // Directly set local file path
-      setLoading(false); // No fetching, so not loading
-    } else if (userInput === "Case2") {
-      // Fetch the graph from a URL
-      fetchData('http://46.101.116.31:3000/get-treemap');
-    }
-  }, [userInput]); // React only to changes in userInput
-
-  if (loading) {
-    return <img src="/Intro.svg" alt="Loading..." className="w-full h-[500px]" />;
-  }
-  if (error) return <p>Error: {error}</p>;
+  }, [data]);
 
   return (
-    <div className="w-full h-[500px] flex flex-col items-center justify-center">
-      {contentType?.includes('text/html')? (
-        // Render HTML content in an iframe
-        <iframe srcDoc={data || ""} title="Dynamic Content" className="w-full h-full" frameBorder="0" />
-      ) : (
-        // Render SVG or other content types using img tag
-        data && <img src={data} alt="Dynamic Graph" className="w-full h-full" />
-      )}
+    <div key={refreshKey}>
+      <div className="w-full h-[500px] flex flex-col items-center justify-center">
+        {loading ? (
+          <img
+            src="/LongRendering.svg"
+            alt="Loading..."
+            className="w-full h-[500px]"
+          />
+        ) : error ? (
+          <img src="/OutOfScope.svg" alt="Error" className="w-full h-[500px]" />
+        ) : (
+          data &&
+          (contentType === "text/html" ? (
+            <iframe
+              srcDoc={data}
+              title="Dynamic Content"
+              className="w-full h-full"
+              frameBorder="0"
+            />
+          ) : (
+            <img src={data} alt="Dynamic Graph" className="w-full h-full" />
+          ))
+        )}
+      </div>
     </div>
   );
 };
 
-export default PromptGrph;
+export default PromptGraph;

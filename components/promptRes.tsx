@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useRefresh } from "./RefreshContext";
+
 type PromptResProps = {
   responseMessage: string;
 };
 const PromptRes: React.FC<PromptResProps> = ({ responseMessage }) => {
+  const { refreshKey } = useRefresh();
+
   return (
-    <>
+    <div key={refreshKey}>
       <div className="flex flex-col w-full rounded-lg pt-2 pb-2">
         <div className=" w-full bg-response border-bor border-2 rounded-lg p-3 text-lg max-h-34 overflow-auto ">
           <p className="  text-lg">
-            Hier wird Ihr Suchergebnis verbal dargestellt. Die Grafik zeigt Ihnen dasselbe mit mehr Details.
+            Hier wird Ihr Suchergebnis verbal dargestellt. Die Grafik zeigt
+            Ihnen dasselbe mit mehr Details.
           </p>
-          <p className="  text-lg">
-            {responseMessage}
-          </p>
+          <p className="  text-lg">{responseMessage}</p>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

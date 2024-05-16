@@ -5,28 +5,44 @@ import { Textarea } from "./ui/textarea";
 import "../app/globals.css";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-import { collectGenerateParams } from "next/dist/build/utils";
+import { useRefresh } from "./RefreshContext";
+
 interface Props {
   setUserInput: React.Dispatch<React.SetStateAction<string>>;
   setTips: React.Dispatch<React.SetStateAction<string>>;
   setResponseMessage: React.Dispatch<React.SetStateAction<string>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setError: React.Dispatch<React.SetStateAction<boolean>>;
+  setData: React.Dispatch<React.SetStateAction<string | null>>;
+  resetStates: () => void;
+  initialPromptText: string;
 }
-const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
+
+const PromptText = ({
+  setUserInput,
+  setTips,
+  setResponseMessage,
+  setLoading,
+  setError,
+  setData,
+  resetStates,
+  initialPromptText
+}: Props) => {
   const { data: session } = useSession();
   const submitButtonRef = useRef(null);
-  const [promptText, setPromptText] = useState("");
+  const [promptText, setPromptText] = useState(initialPromptText);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
 
   const [promptString, setPromptString] = useState("");
   const [title, setTitle] = useState("");
+  const { triggerRefresh } = useRefresh();
 
   useEffect(() => {
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
-    const queryPromptString = params.get('prompt_string');
-    const queryTitle = params.get('title');
-    console.log(queryPromptString)
+    const queryPromptString = params.get("prompt_string");
+    const queryTitle = params.get("title");
+    console.log(queryPromptString);
     if (queryPromptString) {
       setPromptString(queryPromptString);
     }
@@ -34,34 +50,43 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
       setTitle(queryTitle);
     }
   }, []);
-
-
+  useEffect(() => {
+    setPromptText(initialPromptText);
+  }, [initialPromptText]);
   const handleKeyDown = (event) => {
-    if (event.keyCode === 13) {
-      submitButtonRef.current.click();
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSend();
     }
   };
 
   const handleNew = () => {
-    window.location.reload();
+    resetStates();
   };
+
   const handleSave = () => {
-    if(!session){
-      toast.error("Bitte registrieren Sie sich, damit Sie alle Funktionen benutzen können");
+    if (!session) {
+      toast.error(
+        "Bitte registrieren Sie sich, damit Sie alle Funktionen benutzen können"
+      );
       return;
     }
-  }
+  };
+
   const handleSend = async () => {
     if (promptText.trim().length === 0) {
       toast.error("Geben Sie zuerst Ihre Suchanfrage ein");
       return;
     }
     setUserInput(promptText);
-    //if (session) {
+    setLoading(true); // Set loading to true when the API call starts
+    setError(false); // Reset error state
+    setData("/LongRendering.svg"); // Set loading SVG
+
     const headersList = {
-      //"Authorization": `Bearer ${session.access_token}`,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     };
+
     try {
       const apiUrl = `${API_BASE_URL}/library/store_prompt`;
 
@@ -75,15 +100,29 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
       });
 
       if (!response.ok) {
-        console.log(response);
-        toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const responseData = await response.json();
       setTips(responseData.tips);
       setResponseMessage(responseData.response);
-      toast.success(`${responseData.message} `, {
+
+      // Fetch treemap data
+      const treemapResponse = await fetch("http://46.101.116.31:3000/get-treemap", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!treemapResponse.ok) {
+        throw new Error(`HTTP error! Status: ${treemapResponse.status}`);
+      }
+
+      const treemapData = await treemapResponse.text();
+      setData(treemapData);
+
+      toast.success(`${responseData.message}`, {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -92,19 +131,18 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
         draggable: true,
         progress: undefined,
       });
-      console.log("API Response:", responseData);
     } catch (error) {
+      setError(true); // Set error state if the API call fails
       console.error("API Error:", error);
+      setData("/OutOfScope.svg"); // Set error SVG
+    } finally {
+      setLoading(false); // Set loading to false when the API call finishes
     }
-    // } else {
-    //   console.log("here is nothing");
-    //   toast.error("Melden Sie sich zuerst an, um Ihre Eingabeaufforderungen zu speichern");
-    // }
   };
 
   return (
     <>
-      <div className="flex w-full items-center mb-2">
+      <div className="flex w-full mb-2">
         <Textarea
           placeholder="Geben Sie hier Ihre Suchanfrage ein..."
           rows={3}
@@ -116,25 +154,14 @@ const PromptText = ({ setUserInput, setTips, setResponseMessage }: Props) => {
         <div className="flex flex-col m-2 w-24">
           <Button
             variant={"outline"}
-            className={`bg-primary text-secondary text-sm h-7 border-white border"
-              }`}
-            //ref={submitButtonRef}
-            onClick={handleSave}
-          >
-            Speichern
-          </Button>
-          <Button
-            variant={"outline"}
-            className={`bg-primary text-secondary h-7 border-white border"
-              }`}
+            className="bg-primary text-secondary h-7 border-white border"
             onClick={handleNew}
           >
             Neu
           </Button>
           <Button
             variant={"outline"}
-            className={`bg-primary text-secondary h-7 border-white border"
-              }`}
+            className="bg-primary text-secondary h-7 border-white border"
             onClick={handleSend}
           >
             Senden
